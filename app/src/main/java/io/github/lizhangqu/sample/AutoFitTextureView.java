@@ -59,6 +59,7 @@ public class AutoFitTextureView extends TextureView {
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     int width = MeasureSpec.getSize(widthMeasureSpec);
     int height = MeasureSpec.getSize(heightMeasureSpec);
+
     if (0 == mRatioWidth || 0 == mRatioHeight) {
       setMeasuredDimension(width, height);
     } else {

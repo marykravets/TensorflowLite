@@ -57,6 +57,8 @@ import java.util.Map;
  */
 public final class Interpreter implements AutoCloseable {
 
+  private NativeInterpreterWrapper wrapper;
+
   /**
    * Initializes a {@code Interpreter}
    *
@@ -106,15 +108,17 @@ public final class Interpreter implements AutoCloseable {
    * @param outputs a map mapping output indices to multidimensional arrays of output data. It only
    *     needs to keep entries for the outputs to be used.
    */
-  public void runForMultipleInputsOutputs(
-      @NonNull Object[] inputs, @NonNull Map<Integer, Object> outputs) {
+  private void runForMultipleInputsOutputs(
+          @NonNull Object[] inputs, @NonNull Map<Integer, Object> outputs) {
     if (wrapper == null) {
       throw new IllegalStateException("The Interpreter has already been closed.");
     }
+
     Tensor[] tensors = wrapper.run(inputs);
     if (outputs == null || tensors == null || outputs.size() > tensors.length) {
       throw new IllegalArgumentException("Outputs do not match with model outputs.");
     }
+
     final int size = tensors.length;
     for (Integer idx : outputs.keySet()) {
       if (idx == null || idx < 0 || idx >= size) {
@@ -169,6 +173,4 @@ public final class Interpreter implements AutoCloseable {
     wrapper.close();
     wrapper = null;
   }
-
-  NativeInterpreterWrapper wrapper;
 }
