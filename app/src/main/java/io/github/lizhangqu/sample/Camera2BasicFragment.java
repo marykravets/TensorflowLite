@@ -65,6 +65,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -348,7 +349,8 @@ public class Camera2BasicFragment extends Fragment
     Activity activity = getActivity();
     CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
     try {
-      for (String cameraId : manager.getCameraIdList()) {
+      String[] idList = Objects.requireNonNull(manager).getCameraIdList();
+      for (String cameraId : idList) {
         CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
 
         // We don't use a front facing camera in this sample.
@@ -491,7 +493,7 @@ public class Camera2BasicFragment extends Fragment
         // for ActivityCompat#requestPermissions for more details.
         return;
       }
-      manager.openCamera(cameraId, stateCallback, backgroundHandler);
+      Objects.requireNonNull(manager).openCamera(cameraId, stateCallback, backgroundHandler);
     } catch (CameraAccessException e) {
       e.printStackTrace();
     } catch (InterruptedException e) {

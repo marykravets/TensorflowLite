@@ -16,12 +16,11 @@ limitations under the License.
 package org.tensorflow.lite;
 
 import android.support.annotation.NonNull;
+import android.util.SparseArray;
 
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Driver class to drive model inference with TensorFlow Lite.
@@ -65,9 +64,6 @@ public final class Interpreter implements AutoCloseable {
    * @param modelFile: a File of a pre-trained TF Lite model.
    */
   public Interpreter(@NonNull File modelFile) {
-    if (modelFile == null) {
-      return;
-    }
     wrapper = new NativeInterpreterWrapper(modelFile.getAbsolutePath());
   }
 
@@ -92,7 +88,7 @@ public final class Interpreter implements AutoCloseable {
    */
   public void run(@NonNull Object input, @NonNull Object output) {
     Object[] inputs = {input};
-    Map<Integer, Object> outputs = new HashMap<>();
+    SparseArray<Object> outputs = new SparseArray<>();
     outputs.put(0, output);
     runForMultipleInputsOutputs(inputs, outputs);
   }
@@ -109,19 +105,19 @@ public final class Interpreter implements AutoCloseable {
    *     needs to keep entries for the outputs to be used.
    */
   private void runForMultipleInputsOutputs(
-          @NonNull Object[] inputs, @NonNull Map<Integer, Object> outputs) {
+          @NonNull Object[] inputs, @NonNull SparseArray<Object> outputs) {
     if (wrapper == null) {
       throw new IllegalStateException("The Interpreter has already been closed.");
     }
 
     Tensor[] tensors = wrapper.run(inputs);
-    if (outputs == null || tensors == null || outputs.size() > tensors.length) {
+    if (tensors == null || outputs.size() > tensors.length) {
       throw new IllegalArgumentException("Outputs do not match with model outputs.");
     }
 
     final int size = tensors.length;
-    for (Integer idx : outputs.keySet()) {
-      if (idx == null || idx < 0 || idx >= size) {
+    for (int idx = 0; idx <= outputs.size(); idx++) {
+      if (idx < 0 || idx >= size) {
         throw new IllegalArgumentException(
             String.format("Invalid index of output %d (should be in range [0, %d))", idx, size));
       }

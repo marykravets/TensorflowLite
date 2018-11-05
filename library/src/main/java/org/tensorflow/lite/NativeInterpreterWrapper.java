@@ -23,6 +23,7 @@ import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * A wrapper wraps native interpreter and controls model execution.
@@ -237,14 +238,14 @@ final class NativeInterpreterWrapper implements AutoCloseable {
   static DataType dataTypeOf(Object o) {
     if (o != null) {
       Class<?> c = o.getClass();
-      while (c.isArray()) {
+      while (c != null ? c.isArray() : false) {
         c = c.getComponentType();
       }
 
       DataType x = getClassDataType(o, c);
       if (x != null) return x;
     }
-    throw new IllegalArgumentException("cannot resolve DataType of " + o.getClass().getName());
+    throw new IllegalArgumentException("cannot resolve DataType of " + Objects.requireNonNull(o).getClass().getName());
   }
 
   @Nullable
@@ -281,7 +282,7 @@ final class NativeInterpreterWrapper implements AutoCloseable {
     return 1 + numDimensions(Array.get(o, 0));
   }
 
-  static void fillShape(Object o, int dim, int[] shape) {
+  private static void fillShape(Object o, int dim, int[] shape) {
     if (shape == null || dim == shape.length) {
       return;
     }

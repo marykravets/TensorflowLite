@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.PriorityQueue;
 import org.tensorflow.lite.Interpreter;
 
@@ -180,7 +181,7 @@ class ImageClassifier {
 
     for (int i = 0; i < size; ++i) {
       label = sortedLabels.poll();
-      textToShow.insert(0, "\n" + label.getKey() + ":" + Float.toString(label.getValue()));
+      textToShow.insert(0, "\n" + Objects.requireNonNull(label).getKey() + ":" + Float.toString(label.getValue()));
     }
     return textToShow.toString();
   }
