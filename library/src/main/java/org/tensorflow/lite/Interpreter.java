@@ -116,8 +116,10 @@ public final class Interpreter implements AutoCloseable {
     }
 
     final int size = tensors.length;
-    for (int idx = 0; idx <= outputs.size(); idx++) {
-      if (idx < 0 || idx >= size) {
+    Integer idx = null;
+    for (int i = 0; i <= outputs.size(); i++) {
+      idx = outputs.keyAt(i);
+      if (idx == null || idx < 0 || idx >= size) {
         throw new IllegalArgumentException(
             String.format("Invalid index of output %d (should be in range [0, %d))", idx, size));
       }
