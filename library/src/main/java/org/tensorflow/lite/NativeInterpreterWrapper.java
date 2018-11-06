@@ -238,7 +238,7 @@ final class NativeInterpreterWrapper implements AutoCloseable {
   static DataType dataTypeOf(Object o) {
     if (o != null) {
       Class<?> c = o.getClass();
-      while (c != null ? c.isArray() : false) {
+      while (c != null && c.isArray()) {
         c = c.getComponentType();
       }
 
